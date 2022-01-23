@@ -6,6 +6,7 @@
 from kafka import KafkaProducer
 import os
 from datetime import datetime
+import time
 
 now = datetime.now()
 
@@ -22,11 +23,15 @@ destination = base_path+'/local_dir/'
 
 files = os.listdir(source)
 
+time.sleep(15)
+
+
 for file in files:
     os.rename(source + file, destination + file)
     current_time = now.strftime("%H:%M:%S")
     data = {"time":current_time,"file_path":destination + file}
-    producer.send(topicName,data)
+    ack = producer.send(topicName, bytes(str(data), 'utf-8'))
+    print(ack.get())
     
     
 
